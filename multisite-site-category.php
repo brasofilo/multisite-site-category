@@ -138,6 +138,6 @@ function get_id($cols) {
 }
 
 function add_style() {
-	echo '<style>#blog_id { width:7%; }</style>';
+	echo '<style>#blog_id { width:7%; } #site_category { width:20%; }</style>';
 }
 
