@@ -117,7 +117,7 @@ function arrayPushAfterMS($src, $in, $pos) {
 add_filter('wpmu_blogs_columns', 'get_id');
 add_action('manage_sites_custom_column', 'add_columns', 10, 2);
 add_action('manage_blogs_custom_column', 'add_columns', 10, 2);
-add_action('admin_footer', 'add_style');
+add_action('admin_footer-sites.php', 'add_style');
 
 
 function add_columns($column_name, $blog_id) {
