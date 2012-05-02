@@ -13,6 +13,7 @@ License: GPL
 
 /*
  * Workaround for adding the "site_category" option in previous sites.
+ * Usage: enable the action, load any page, disable it
  * URI: http://premium.wpmudev.org/forums/topic/update_blog_option-and-caching-problem
  */
 //add_action('init','resetSitesOptions');
