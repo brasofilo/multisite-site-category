@@ -6,12 +6,12 @@
 (function($) {
     $(document).ready(function() {
         $('<tr class="form-field form-required"></tr>').append(
-            $('<th scope="row">Site Category</th>')
+            $('<th scope="row">Site category</th>')
         ).append(
             $('<td></td>').append(
                 $('<input class="regular-text" type="text" title="Site Category" name="blog[site_category]">')
             ).append(
-                $('<p>choose one</p>')
+                $('<p></p>')
             )
         ).insertAfter('#wpbody-content table tr:eq(2)');
 
