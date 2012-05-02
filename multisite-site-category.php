@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: MS Site Meta
+Plugin Name: Multisite Site Category
 Plugin URI: https://github.com/brasofilo/multisite-site-category
 Description: Add a custom meta option when registering new sites in WordPress Multisite.
 Author: Rodolfo Buaiz
