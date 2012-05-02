@@ -23,7 +23,11 @@ Two columns will be added to the Sites listing screen: ID and Category.
 
 
 ## Screenshots
-![Link Manager](https://github.com/brasofilo/multisite-site-category/raw/master/screenshot-1.png)
+![Sites Manager](https://github.com/brasofilo/multisite-site-category/raw/master/screenshot-1.png)
+
+![Site add back end](https://github.com/brasofilo/multisite-site-category/raw/master/screenshot-2.png)
+
+![Site add front end](https://github.com/brasofilo/multisite-site-category/raw/master/screenshot-3.png)
 
 
 ## Other Notes
