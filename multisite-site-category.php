@@ -32,7 +32,7 @@ function resetSitesOptions() {
 
 /*
  * Add new option when registering a site (back and front end)
- * URI: http://stackoverflow.com/questions/10339053/wordpress-multisite-how-to-add-custom-blog-options-to-add-new-site-form-in-ne
+ * URI: http://stackoverflow.com/a/10372861/1287812
 */
 add_action('wpmu_new_blog', 'add_new_blog_field');
 
@@ -58,7 +58,7 @@ function add_new_blog_field($blog_id, $user_id, $domain, $path, $site_id, $meta)
 /*
  * Add new field in /wp-admin/network/site-new.php
  * has to be done with jQuery
- * URI: http://stackoverflow.com/questions/10339053/wordpress-multisite-how-to-add-custom-blog-options-to-add-new-site-form-in-ne
+ * URI: http://stackoverflow.com/a/10372861/1287812
 */
 add_action("admin_print_scripts-site-new.php", 'my_admin_scripts');
 
@@ -70,7 +70,7 @@ function my_admin_scripts() {
 
 /*
  * Add new field in site signup form /wp-signup.php
- * URI: http://wordpress.stackexchange.com/questions/50235/multisite-how-to-add-custom-blog-options-to-new-blog-setup-form
+ * URI: http://wordpress.stackexchange.com/a/50550/12615
 */
 add_action('signup_blogform', 'add_extra_field_on_blog_signup');
 
@@ -83,7 +83,7 @@ function add_extra_field_on_blog_signup() {
 
 /*
  * Append the submitted value of our custom input into the meta array that is stored while the user doesn't activate
- * URI: http://wordpress.stackexchange.com/questions/50235/multisite-how-to-add-custom-blog-options-to-new-blog-setup-form
+ * URI: http://wordpress.stackexchange.com/a/50550/12615
 */
 add_filter('add_signup_meta', 'append_extra_field_as_meta');
 

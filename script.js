@@ -1,6 +1,6 @@
 /*
  * Add new field in /wp-admin/network/site-new.php
- * URI: http://stackoverflow.com/questions/10339053/wordpress-multisite-how-to-add-custom-blog-options-to-add-new-site-form-in-ne
+ * URI: http://stackoverflow.com/a/10372861/1287812
  */
 
 (function($) {
