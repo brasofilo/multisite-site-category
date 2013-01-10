@@ -18,7 +18,7 @@ Two columns will be added to the Sites listing screen: ID and Category.
 ### Installation
 1. Unpack the download-package
 1. Upload the file to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Activate the plugin through the 'Network Plugins' menu in WordPress
 1. Go to `/wp-admin/network/sites.php`, `/wp-admin/network/site-new.php` and `/wp-signup.php` to see it in action
 
 
