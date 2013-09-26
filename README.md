@@ -4,12 +4,20 @@
 WordPress plugin for adding a custom meta to New Sites.
 
 ## Description
-Based in this [WordPress Question](http://wordpress.stackexchange.com/questions/50235/multisite-how-to-add-custom-blog-options-to-new-blog-setup-form)
+The plugin adds a new field "category" to the Site Info screen. 
+A sortable column is also added in the Sites list screen.
+A Categories submenu is created under Sites, add or remove categories there.
 
-A new field will be enabled when adding new site in the back and the front end.
+Available hooks:
+```
+// Cache time, default 3600 (1hour)
+add_filter( 'msc_transient_time', function(){ return 1; } );
+// For debugging purposes
+add_filter( 'msc_show_mature_column', '__return_true' );
+```
 
-Two columns will be added to the Sites listing screen: ID and Category.
-
+Originally based on this [WordPress Question](http://wordpress.stackexchange.com/q/50235/12615). 
+[Here's a copy](https://gist.github.com/brasofilo/6715423) of the first version of the plugin.
 
 ## Installation
 ### Requirements
@@ -19,19 +27,17 @@ Two columns will be added to the Sites listing screen: ID and Category.
 1. Unpack the download-package
 1. Upload the file to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Network Plugins' menu in WordPress
-1. Go to `/wp-admin/network/sites.php`, `/wp-admin/network/site-new.php` and `/wp-signup.php` to see it in action
-
 
 ## Screenshots
-**Sites Manager**
+**Sites Manager showing the debug column *mature*.**
 
 ![Sites Manager](https://github.com/brasofilo/multisite-site-category/raw/master/img/screenshot-1.png)
 
-**Add site : back end**
+**Site info**
 
 ![Site add back end](https://github.com/brasofilo/multisite-site-category/raw/master/img/screenshot-2.png)
 
-**Add site : front end**
+**Manage categories**
 
 ![Site add front end](https://github.com/brasofilo/multisite-site-category/raw/master/img/screenshot-3.png)
 

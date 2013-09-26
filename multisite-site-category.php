@@ -7,302 +7,356 @@
  * Network: true
  * Author: Rodolfo Buaiz
  * Author URI: http://rodbuaiz.com/
- * Version: 1.1
- * Stable Tag: 1.1
+ * Version: 2013.09.26
  * License: GPLv2 or later
  * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU 
- * General Public License version 2, as published by the Free Software Foundation.  You may NOT assume 
- * that you can use any other version of the GPL.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/*
+Multisite Site Category
+Copyright (C) 2013  Rodolfo Buaiz
 
-// BUSTED!
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+# BUSTED!
 !defined( 'ABSPATH' ) AND exit(
                 "<pre>Hi there! I'm just part of a plugin, <h1>&iquest;what exactly are you looking for?"
 );
 
-// PREPARE
-if( !class_exists( 'BL_Multisite_Categories' ) ):
+# ACTIVATION
+register_activation_hook(
+        __FILE__, array( 'B5F_Multisite_Categories', 'on_activation' )
+);
 
-    class BL_Multisite_Categories
+# INIT
+add_action(
+        'plugins_loaded', array( B5F_Multisite_Categories::get_instance(), 'plugin_setup' )
+);
+
+class B5F_Multisite_Categories
+{
+    /**
+     * Plugin instance.
+     *
+     * @see get_instance()
+     * @type object
+     */
+    protected static $instance = NULL;
+
+    /**
+     * URL to this plugin's directory.
+     *
+     * @type string
+     */
+    public $plugin_url = '';
+
+    /**
+     * Path to this plugin's directory.
+     *
+     * @type string
+     */
+    public $plugin_path = '';
+
+    /**
+     * Option name for the Categories List
+     * 
+     * @var object 
+     */
+    public static $option_name = 'sites_categories_list';
+    
+    /**
+     * Holds the List of Categories and its IDs (mature)
+     * 
+     * @var object 
+     */
+    public $options;
+    
+    /**
+     * Debug only, show the mature column
+     * 
+     * Use add_filter( 'msc_show_mature_column', '__return_true' );
+     * 
+     * @var bool 
+     */
+    public static $show_mature_column = false;
+    
+    
+    /**
+     * Cache list of sites with id + mature
+     * 
+     * add_filter( 'msc_transient_time', function(){ return 1; } );
+     * 
+     * @var bool 
+     */
+    public static $sites_transient = 3600; // 1 hour
+    
+    
+    /**
+     * Access this plugin’s working instance
+     *
+     * @wp-hook plugins_loaded
+     * @since   2012.09.13
+     * @return  object of this class
+     */
+    public static function get_instance()
     {
-        /**
-         * Plugin instance.
-         *
-         * @see get_instance()
-         * @type object
-         */
-        protected static $instance = NULL;
+        NULL === self::$instance and self::$instance = new self;
 
-        /**
-         * URL to this plugin's directory.
-         *
-         * @type string
-         */
-        public $plugin_url = '';
-
-        /**
-         * Path to this plugin's directory.
-         *
-         * @type string
-         */
-        public $plugin_path = '';
-
-        /**
-         * Access this plugin’s working instance
-         *
-         * @wp-hook plugins_loaded
-         * @since   2012.09.13
-         * @return  object of this class
-         */
-        public static function get_instance()
-        {
-            NULL === self::$instance and self::$instance = new self;
-
-            return self::$instance;
-        }
-
-
-        /**
-         * Activation hook
-         * 
-         * Checks if option exist, otherwise fill it up
-         * 
-         * @global type $wpdb
-         */
-        public function on_activation()
-        {
-            if( !is_multisite() )
-                wp_die( 'Cannot install in Single Site. Multisite only!' );
-
-            // Get the Sites
-            global $wpdb;
-            $blogs = $wpdb->get_results(
-                    "SELECT blog_id
-                    FROM {$wpdb->blogs}
-                    WHERE site_id = '{$wpdb->siteid}'"
-            );
-
-            // Create the Category 
-            foreach( $blogs as $blog )
-            {
-                switch_to_blog( $blog->blog_id );
-                $have_category = get_blog_option( $blog->blog_id, 'site_category' );
-                if( !$have_category )
-                    update_blog_option( $blog->blog_id, 'site_category', 'Uncategorized' );
-            }
-            restore_current_blog();
-        }
-
-
-        /**
-         * Used for regular plugin work.
-         *
-         * @wp-hook plugins_loaded
-         * @since   2012.09.10
-         * @return  void
-         */
-        public function plugin_setup()
-        {
-            if( !is_admin() )
-                add_action(
-                        'signup_blogform', array( $this, 'signup_blogform_extra_field' )
-                );
-
-            if( !is_network_admin() )
-                return;
-
-            $this->plugin_url  = plugins_url( '/', __FILE__ );
-            $this->plugin_path = plugin_dir_path( __FILE__ );
-
-            add_action(
-                    'admin_print_scripts-site-new.php', array( $this, 'admin_scripts' )
-            );
-            add_action(
-                    'admin_footer-sites.php', array( $this, 'add_style' )
-            );
-            add_action(
-                    'manage_blogs_custom_column', array( $this, 'add_columns' ), 10, 2
-            );
-            add_action(
-                    'manage_sites_custom_column', array( $this, 'add_columns' ), 10, 2
-            );
-            add_action(
-                    'wpmu_new_blog', array( $this, 'add_new_blog_field' )
-            );
-            add_filter(
-                    'add_signup_meta', array( $this, 'append_extra_field_as_meta' )
-            );
-            add_filter(
-                    'wpmu_blogs_columns', array( $this, 'print_columns' )
-            );
-        }
-
-
-        /**
-         * Constructor. Intentionally left empty and public.
-         *
-         * @see plugin_setup()
-         * @since 2012.09.12
-         */
-        public function __construct()
-        {
-            
-        }
-
-
-        /**
-         * Add new option when registering a site (back and front end)
-         *
-         * URI: http://stackoverflow.com/a/10372861/1287812
-         */
-        public function add_new_blog_field( $blog_id, $user_id, $domain, $path, $site_id, $meta )
-        {
-            $new_field_value = 'default';
-
-            // Site added in the back end
-            if( !empty( $_POST['blog']['site_category'] ) )
-            {
-                switch_to_blog( $blog_id );
-                $new_field_value = $_POST['blog']['site_category'];
-                update_option( 'site_category', $new_field_value );
-
-                restore_current_blog();
-            }
-            // Site added in the front end
-            elseif( !empty( $meta['site_category'] ) )
-            {
-                $new_field_value = $meta['site_category'];
-                update_option( 'site_category', $new_field_value );
-            }
-        }
-
-
-        /**
-         * Add new field in /wp-admin/network/site-new.php
-         * has to be done with jQuery
-         *
-         * URI: http://stackoverflow.com/a/10372861/1287812
-         */
-        public function admin_scripts()
-        {
-            wp_register_script( 'b_msc', $this->plugin_url . 'js/script.js' );
-            wp_enqueue_script( 'b_msc' );
-        }
-
-
-        /**
-         * Add new field in site signup form /wp-signup.php
-         *
-         * URI: http://wordpress.stackexchange.com/a/50550/12615
-         */
-        public function signup_blogform_extra_field()
-        {
-            $txt = __( 'Category' );
-            echo "
-			<label>{$txt}</label>
-			<input type='text' name='site_category' value='' />
-		";
-        }
-
-
-        /**
-         * Append the submitted value of our custom input 
-         * into the meta array that is stored while the user doesn't activate
-         *
-         * URI: http://wordpress.stackexchange.com/a/50550/12615
-         */
-        public function append_extra_field_as_meta( $meta )
-        {
-            if( isset( $_REQUEST['site_category'] ) )
-                $meta['site_category'] = $_REQUEST['site_category'];
-
-            return $meta;
-        }
-
-
-        /**
-         * Add custom columns (ID and Site Category) in Sites listing
-         *
-         */
-        public function add_columns( $column_name, $blog_id )
-        {
-            if( 'blog_id' === $column_name )
-                echo $blog_id;
-
-            elseif( 'site_category' === $column_name )
-            {
-                $sitecat = get_blog_option( $blog_id, 'site_category' );
-                echo $sitecat;
-            }
-
-            return $column_name;
-        }
-
-
-        /**
-         * Add Columns
-         *
-         */
-        public function print_columns( $cols )
-        {
-            $in = array( "blog_id"              => "ID" );
-            $cols                  = $this->arrayPushAfter( $cols, $in, 0 );
-            $cols['site_category'] = __( 'Category' );
-            return $cols;
-        }
-
-
-        /**
-         * Add column widths
-         *
-         */
-        public function add_style()
-        {
-            echo '<style>#blog_id { width:7%; } #site_category { width:20%; }</style>';
-        }
-
-
-        /**
-         * Insert $in item in position $pos inside the $src array
-         *
-         */
-        private function arrayPushAfter( $src, $in, $pos )
-        {
-            if( is_int( $pos ) )
-                $R = array_merge( array_slice( $src, 0, $pos + 1 ), $in, array_slice( $src, $pos + 1 ) );
-            else
-            {
-                foreach( $src as $k => $v )
-                {
-                    $R[$k] = $v;
-                    if( $k == $pos )
-                        $R     = array_merge( $R, $in );
-                }
-            }
-            return $R;
-        }
-
-
+        return self::$instance;
     }
 
-endif;
+
+    /**
+     * Activation hook
+     * 
+     * Checks if option exist, otherwise fill it up
+     * 
+     * @global type $wpdb
+     */
+    public function on_activation()
+    {
+        if( !is_multisite() )
+            wp_die(
+               'Cannot install in Single Site. Multisite only!', 
+               'Error',  
+               array( 
+                   'response' => 500, 
+                   'back_link' => true 
+               )
+           );
+
+        $blogs = $this->get_blog_list();
+        $original_blog = get_current_blog_id();
+        foreach( $blogs as $blog )
+        {
+            switch_to_blog( $blog['blog_id'] );
+            $have_category = get_blog_option( $blog['blog_id'], 'site_category' );
+            if( empty( $have_category ) )
+                update_blog_option( $blog['blog_id'], 'site_category', '' );
+        }
+        switch_to_blog( $original_blog );
+    }
 
 
-// ACTION!
-if( function_exists( 'add_action' ) )
-{
-    // Initial plugin hooks
-    register_activation_hook(
-            __FILE__, array( 'BL_Multisite_Categories', 'on_activation' )
-    );
+    /**
+     * Used for regular plugin work.
+     *
+     * @wp-hook plugins_loaded
+     * @since   2012.09.10
+     * @return  void
+     */
+    public function plugin_setup()
+    {
+        $this->plugin_url  = plugins_url( '/', __FILE__ );
+        $this->plugin_path = plugin_dir_path( __FILE__ );
+        $this->options = get_option( self::$option_name );
+        
+        # SIGNUP FIELDS
+        # needs further work, disable for now
+        // require_once 'inc/class-sites-categories-signup.php';
+        // new B5F_Sites_Categories_Signup();
+        
+        # BAIL OUT
+        if( !is_network_admin() )
+            return;
+        
+        # NETWORK MENU
+        require_once 'inc/class-sites-categories-menu.php';
+        new B5F_Sites_Categories_Menu();
+        
+        # COLUMNS
+        require_once 'inc/class-sites-categories-columns.php';
+        new B5F_Sites_Categories_Columns();
+        
+        # MANIPULATE FIELDS IN SITE-INFO
+        add_action( 'admin_init', array( $this, 'site_info_post_data' ) );
+        add_action( 'admin_footer', array( $this, 'site_info_scripts' ) );
+    }
 
 
-    add_action(
-            'plugins_loaded', array( BL_Multisite_Categories::get_instance(), 'plugin_setup' )
-    );
+    /**
+     * Constructor. Intentionally left empty and public.
+     *
+     * @see plugin_setup()
+     * @since 2012.09.12
+     */
+    public function __construct() {}
+
+
+    /**
+     * Change site category in Site Info
+     * 
+     * @return void
+     */
+    public function site_info_post_data()
+    {
+        if ( 
+            !isset( $_POST['nonce_b5f_msc'] ) 
+            || !wp_verify_nonce( $_POST['nonce_b5f_msc'], plugin_basename( __FILE__ ) ) 
+        )
+            return;
+        if( isset( $_POST['input_site_cat'] ) )
+        {
+            $val = $this->do_mature_to_name( $_POST['input_site_cat'] );
+            update_blog_option( $_POST['id'], 'site_category', $val );
+            update_blog_status( absint( $_POST['id'] ), 'mature', $_POST['input_site_cat'] );
+            get_blog_status(absint( $_POST['id'] ),'mature');
+        }
+    }
+    
+    
+    /**
+     * Manipulate fields on site-info.php
+     * 
+     * @return string
+     */
+    public function site_info_scripts()
+    {
+        if( 'site-info-network' != get_current_screen()->id || !isset( $_GET['id'] ) )
+            return;
+
+        $nonce = wp_nonce_field( plugin_basename( __FILE__ ), 'nonce_b5f_msc', true, false );
+        $dropdown = $this->get_dropdown( $_GET['id'], $nonce );
+        $dropdown = '<tr><th scope="row">Category</th><td>' . $dropdown . $nonce . '</td></tr>';
+echo <<<HTML
+	<script type="text/javascript">
+		jQuery(document).ready( function($) {
+			$(".form-table").find("label:contains('Mature')").remove();
+            $('$dropdown').appendTo('.form-table')
+		});
+	</script>
+HTML;
+    }
+
+    
+    /** 
+     * Generate HTML for categories dropdown
+     * 
+     * @param type $nonce
+     */
+    public function get_dropdown( $site_id )
+    {
+        $all_cats = get_option( self::$option_name );
+        $dropdown = '<select name="input_site_cat" id="input_site_cat">';
+        $site_cat = !empty( $site_id ) ? get_blog_option( $site_id, 'site_category' ) : false;
+        $empty_cat = '';
+        if( $site_cat )
+            $site_cat = $this->do_name_to_mature( $site_cat );
+        else
+            $empty_cat = 'selected="selected"';
+        
+        $dropdown .= '<option value="empty" ' . $empty_cat . '>--select--</option>';
+        foreach ( $all_cats as $cat ) 
+        {
+            $sel = $cat['mature'] == $site_cat ? 'selected="selected"' : '';
+            $dropdown .= sprintf(
+                '<option value="%s" %s>%s</option>',
+                $cat['mature'],
+                $sel,//selected( $count, $site_cat, false ),
+                $cat['name']
+            );
+        }	
+        $dropdown .= '</select>';
+        return $dropdown;
+    }
+    
+    
+    /**
+     * Categories settings changed, updated sites
+     * 
+     * @param array $cats_arr
+     */
+    public function update_sites( $cats_arr )
+    {
+        $this->options = $cats_arr;
+        $blogs = $this->get_blog_list();
+        foreach( $blogs as $blog )
+        {
+            $id = $blog['blog_id'];
+            $opt = get_blog_option( $id, 'site_category' );
+            $mature = $this->do_name_to_mature( $opt );
+            if( !$mature )
+                update_blog_option( $id, 'site_category', '' );
+            update_blog_status( absint( $id ), 'mature', $mature );
+            get_blog_status( absint( $id ),'mature');
+        }
+    }
+    
+    
+    /**
+     * Get blog list
+     * 
+     * @return array All blogs IDs
+     */
+    public function get_blog_list() 
+    {
+        $blogs = get_site_transient( 'multisite_blog_list' );
+        if ( FALSE === $blogs ) 
+        {
+            $time = apply_filters( 'msc_transient_time',  self::$sites_transient );
+            global $wpdb;
+            $limit = '';
+            //$limit = "LIMIT $start, $num";
+            $blogs = $wpdb->get_results(
+                $wpdb->prepare( "
+                    SELECT blog_id, mature 
+                    FROM $wpdb->blogs
+                    WHERE site_id = %d 
+                    $limit
+                ", $wpdb->siteid ), 
+             ARRAY_A );
+             set_site_transient( 'multisite_blog_list', $blogs, $time );
+        }
+        return $blogs;
+    }
+
+    
+    /**
+     * Gets category name base on id (mature)
+     * 
+     * @param int $mature
+     * @return string
+     */
+    public function do_mature_to_name( $mature )
+    {
+        foreach( $this->options as $opt )
+        {
+            if( $mature == $opt['mature'] )
+                return $opt['name'];
+        }
+        return '';
+    }
+    
+    
+    /**
+     * Get id (mature) based on category name
+     * 
+     * @param string $category
+     * @return int
+     */
+    public function do_name_to_mature( $category )
+    {
+        foreach( $this->options as $opt )
+        {
+            if( $category == $opt['name'] )
+                return $opt['mature'];
+        }
+        return '';
+    }
+    
+
+
 }
