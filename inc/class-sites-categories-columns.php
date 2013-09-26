@@ -34,9 +34,6 @@ class B5F_Sites_Categories_Columns
             && isset( $_GET['orderby'] ) && 'site-category' == $_GET['orderby'] 
         ) 
             add_filter( 'query', array( $this, 'filter_site_query' ) );
-        # WP, ALL MATURES ARE OK
-        elseif( 'sites.php' != $pagenow )
-            add_filter( 'blog_details', array( $this, 'hack_mature_queries' ) );	
 
     }
 
@@ -135,17 +132,4 @@ class B5F_Sites_Categories_Columns
     }
 
     
-    /**
-     * Tell WP all Matures are equal to 0
-     * Except in the screen sites.php
-     * 
-     * @param object $details
-     * @return object
-     */
-    public function hack_mature_queries( $details )
-    {
-        $details->mature = 0;
-        return $details;
-    }
-
 }

@@ -143,8 +143,8 @@ class B5F_Multisite_Categories
         foreach( $blogs as $blog )
         {
             switch_to_blog( $blog['blog_id'] );
-            $have_category = get_blog_option( $blog['blog_id'], 'site_category' );
-            if( empty( $have_category ) )
+            $has_category = get_blog_option( $blog['blog_id'], 'site_category' );
+            if( empty( $has_category ) )
                 update_blog_option( $blog['blog_id'], 'site_category', '' );
         }
         switch_to_blog( $original_blog );
@@ -160,6 +160,7 @@ class B5F_Multisite_Categories
      */
     public function plugin_setup()
     {
+        global $pagenow;
         $this->plugin_url  = plugins_url( '/', __FILE__ );
         $this->plugin_path = plugin_dir_path( __FILE__ );
         $this->options = get_option( self::$option_name );
@@ -169,6 +170,10 @@ class B5F_Multisite_Categories
         // require_once 'inc/class-sites-categories-signup.php';
         // new B5F_Sites_Categories_Signup();
         
+        # WP, ALL MATURES ARE OK
+        if( 'sites.php' != $pagenow )
+            add_filter( 'blog_details', array( $this, 'hack_mature_queries' ) );	
+
         # BAIL OUT
         if( !is_network_admin() )
             return;
@@ -184,6 +189,7 @@ class B5F_Multisite_Categories
         # MANIPULATE FIELDS IN SITE-INFO
         add_action( 'admin_init', array( $this, 'site_info_post_data' ) );
         add_action( 'admin_footer', array( $this, 'site_info_scripts' ) );
+        
     }
 
 
@@ -195,6 +201,19 @@ class B5F_Multisite_Categories
      */
     public function __construct() {}
 
+
+    /**
+     * Tell WP all Matures are equal to 0
+     * Except in the screen sites.php
+     * 
+     * @param object $details
+     * @return object
+     */
+    public function hack_mature_queries( $details )
+    {
+        $details->mature = 0;
+        return $details;
+    }
 
     /**
      * Change site category in Site Info
