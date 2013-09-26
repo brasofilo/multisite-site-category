@@ -16,7 +16,7 @@ add_filter( 'msc_transient_time', function(){ return 1; } );
 add_filter( 'msc_show_mature_column', '__return_true' );
 ```
 
-Originally based on this [WordPress Question](http://wordpress.stackexchange.com/q/50235/12615). 
+Originally based on this [WordPress Question](http://wordpress.stackexchange.com/q/50235/12615).  
 [Here's a copy](https://gist.github.com/brasofilo/6715423) of the first version of the plugin.
 
 ## Installation
