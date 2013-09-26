@@ -1,7 +1,7 @@
 ![MTT logo](https://raw.github.com/brasofilo/Private-Comments-in-CPT/master/logo.png)
 
 # Multisite Site Category
-WordPress plugin for adding a custom meta to New Sites.
+WordPress plugin for managing sites categories.
 
 ## Description
 The plugin adds a new field "category" to the Site Info screen. 
