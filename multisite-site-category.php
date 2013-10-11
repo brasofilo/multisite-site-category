@@ -7,7 +7,7 @@
  * Network: true
  * Author: Rodolfo Buaiz
  * Author URI: http://rodbuaiz.com/
- * Version: 2013.09.26
+ * Version: 2013.10.11
  * License: GPLv2 or later
  * 
  */
@@ -104,6 +104,8 @@ class B5F_Multisite_Categories
     public static $sites_transient = 3600; // 1 hour
     
     
+    public static $repo_slug = 'multisite-site-category';
+
     /**
      * Access this plugin’s working instance
      *
@@ -114,7 +116,6 @@ class B5F_Multisite_Categories
     public static function get_instance()
     {
         NULL === self::$instance and self::$instance = new self;
-
         return self::$instance;
     }
 
@@ -138,7 +139,7 @@ class B5F_Multisite_Categories
                )
            );
 
-        $blogs = $this->get_blog_list();
+        $blogs = self::get_blog_list();
         $original_blog = get_current_blog_id();
         foreach( $blogs as $blog )
         {
@@ -190,6 +191,15 @@ class B5F_Multisite_Categories
         add_action( 'admin_init', array( $this, 'site_info_post_data' ) );
         add_action( 'admin_footer', array( $this, 'site_info_scripts' ) );
         
+        # Self hosted updates
+        include_once 'inc/plugin-update-checker.php';
+        $updateChecker = new PluginUpdateCheckerB(
+            'https://raw.github.com/brasofilo/'.self::$repo_slug.'/master/inc/update.json', 
+            __FILE__, 
+            self::$repo_slug.'-master'
+        );
+        # Workaround to remove the suffix "-master" from the unzipped directory
+        add_filter( 'upgrader_source_selection', array( $this, 'rename_github_zip' ), 1, 3 );
     }
 
 
@@ -301,7 +311,7 @@ HTML;
     public function update_sites( $cats_arr )
     {
         $this->options = $cats_arr;
-        $blogs = $this->get_blog_list();
+        $blogs = self::get_blog_list();
         foreach( $blogs as $blog )
         {
             $id = $blog['blog_id'];
@@ -320,7 +330,7 @@ HTML;
      * 
      * @return array All blogs IDs
      */
-    public function get_blog_list() 
+    public static function get_blog_list() 
     {
         $blogs = get_site_transient( 'multisite_blog_list' );
         if ( FALSE === $blogs ) 
@@ -376,6 +386,47 @@ HTML;
         return '';
     }
     
+    
+    /**
+     * Add donate link to plugin description in /wp-admin/plugins.php
+     * 
+     * @param array $plugin_meta
+     * @param string $plugin_file
+     * @param string $plugin_data
+     * @param string $status
+     * @return array
+     */
+    public function donate_link( $plugin_meta, $plugin_file, $plugin_data, $status ) 
+	{
+		if( plugin_basename( __FILE__ ) == $plugin_file )
+			$plugin_meta[] = sprintf(
+                '&hearts; <a href="%s">%s</a>',
+                'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JNJXKWBYM9JP6&lc=US&item_name=Rodolfo%20Buaiz&item_number=Plugin%20donation&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted',
+                __( 'Buy me a beer :)' )
+            );
+		return $plugin_meta;
+	}
 
+
+    /**
+	 * Removes the prefix "-master" when updating from GitHub zip files
+	 * 
+	 * See: https://github.com/YahnisElsts/plugin-update-checker/issues/1
+	 * 
+	 * @param string $source
+	 * @param string $remote_source
+	 * @param object $thiz
+	 * @return string
+	 */
+	public function rename_github_zip( $source, $remote_source, $thiz )
+	{
+		if(  strpos( $source, self::$repo_slug ) === false )
+			return $source;
+
+		$path_parts = pathinfo($source);
+		$newsource = trailingslashit($path_parts['dirname']). trailingslashit( self::$repo_slug );
+		rename($source, $newsource);
+		return $newsource;
+	}
 
 }

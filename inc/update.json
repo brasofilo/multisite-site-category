@@ -1,16 +1,16 @@
 {
-    "name" : "All Your Stack Posts",
-    "slug" : "All-Your-Stack-Posts-master",
-    "download_url" : "https://github.com/brasofilo/All-Your-Stack-Posts/archive/master.zip",
-    "version" : "1.4",
+    "name" : "Multisite Site Category",
+    "slug" : "multisite-site-category-master",
+    "download_url" : "https://github.com/brasofilo/multisite-site-category/archive/master.zip",
+    "version" : "2013.10.11",
     "author" : "Rodolfo Buaiz",
-    "author_homepage" : "http://stackexchange.com/users/1211516?tab=accounts",
-    "homepage" : "http://stackapps.com/q/4306/10590",
+    "author_homepage" : "http://brasofilo.com",
+    "homepage" : "https://github.com/brasofilo/multisite-site-category",
     "tested" : "3.6",
     "sections" : {
-        "description" : "Get all Questions or Answers from a given user in a given Stack site.",
-        "changelog" : "<p><ul><li><strong>1.3</strong><p>Fixed extra suffix given to plugin folder name by GitHub.</p></li><li><strong>1.3</strong><p>New feature: short links and user referrer.</p></li><li><strong>1.2</strong><p>Testing another update solution.</p></li><li><strong>1.1</strong><p>Added GitHub updater capabilities.</p></li><li><strong>1.0</strong><p>Initial Public Release.</p></li></ul>"
+        "description" : "Add a custom meta option when registering new sites in WordPress Multisite.",
+        "changelog" : "<p><ul><li><strong>2013.10.11</strong><p>Added GitHub updater.</p></li></ul>"
     },
-    "upgrade_notice" : "Version 1.4 Removal of the suffix '-master' (given by GitHub) from the plugin folder name after updating. Attention: this will deactivate the plugin after updating, and you'll have to manually activate it again..",
-    "last_updated" : "2013-08-28"
+    "upgrade_notice" : "Version 2013.10.11 - Adding github updater.",
+    "last_updated" : "2013-10-11"
 }

@@ -99,7 +99,7 @@ class B5F_Sites_Categories_Menu
             </thead>
             <tbody>
             <?php
-            $blogs = B5F_Multisite_Categories::get_instance()->get_blog_list();
+            $blogs = B5F_Multisite_Categories::get_blog_list();
             
             if ( $repeatable_fields ) :
 

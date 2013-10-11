@@ -47,15 +47,15 @@ Originally based on this [WordPress Question](http://wordpress.stackexchange.com
 
 **Sites Manager showing the debug column *mature*.**
 
-![Sites Manager](https://github.com/brasofilo/multisite-site-category/raw/master/img/screenshot-1.png)
+![Sites Manager](img/screenshot-1.png)
 
 **Site info**
 
-![Site add back end](https://github.com/brasofilo/multisite-site-category/raw/master/img/screenshot-2.png)
+![Site add back end](img/screenshot-2.png)
 
 **Manage categories**
 
-![Site add front end](https://github.com/brasofilo/multisite-site-category/raw/master/img/screenshot-3.png)
+![Site add front end](img/screenshot-3.png)
 
 
 ## Other Notes
