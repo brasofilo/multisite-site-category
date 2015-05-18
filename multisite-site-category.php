@@ -8,7 +8,7 @@
  * Original author: Rodolfo Buaiz
  * Maintainer: Trinh Nguyen
  * Maintainer URI: http://me.dangtrinh.com
- * Version: 2.00
+ * Version: 10.001
  * License: GPLv2 or later
  * 
  */
@@ -202,6 +202,8 @@ class B5F_Multisite_Categories
         );
         # Workaround to remove the suffix "-master" from the unzipped directory
         add_filter( 'upgrader_source_selection', array( $this, 'rename_github_zip' ), 1, 3 );
+        
+		add_action('wpmu_new_blog', array( $this, 'add_new_blog_field' ));
     }
 
 
@@ -212,6 +214,33 @@ class B5F_Multisite_Categories
      * @since 2012.09.12
      */
     public function __construct() {}
+
+
+     /**
+	* Add new option when registering a site (back and front end)
+	*
+	* URI: http://stackoverflow.com/a/10372861/1287812
+	*/
+	public function add_new_blog_field( $blog_id, $user_id, $domain, $path, $site_id, $meta )
+	{
+		$new_field_value = 'default';
+	
+		// Site added in the back end
+		if( !empty( $_POST['blog']['site_category'] ) )
+		{
+			switch_to_blog( $blog_id );
+			$new_field_value = $_POST['blog']['site_category'];
+			update_option( 'site_category', $new_field_value );
+		
+			restore_current_blog();
+		}
+		// Site added in the front end
+		elseif( !empty( $meta['site_category'] ) )
+		{
+			$new_field_value = $meta['site_category'];
+			update_option( 'site_category', $new_field_value );
+		}
+	}
 
 
     /**
