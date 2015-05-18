@@ -8,7 +8,7 @@
  * Original author: Rodolfo Buaiz
  * Maintainer: Trinh Nguyen
  * Maintainer URI: http://me.dangtrinh.com
- * Version: 10.001
+ * Version: 2015.05.18
  * License: GPLv2 or later
  * 
  */
