@@ -61,7 +61,12 @@ class B5F_Sites_Categories_Signup
         if( !empty( $_POST['blog']['input_site_cat'] ) )
         {
             switch_to_blog( $blog_id );
+            
             $cat_id = $_POST['blog']['input_site_cat'];
+            
+            # debug
+            do_action( 'add_debug_info', $cat_id, $label );
+            
             # TODO: if Sign-up is to be enabled, change this to a method
             $val = B5F_Multisite_Categories::get_instance()->do_mature_to_name( $cat_id );
             update_blog_option( $blog_id, 'site_category', $val );

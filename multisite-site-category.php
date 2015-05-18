@@ -173,9 +173,6 @@ class B5F_Multisite_Categories
         require_once 'inc/class-sites-categories-signup.php';
         new B5F_Sites_Categories_Signup();
         
-		//~ if( !is_admin() ){
-			//~ add_action('signup_blogform', array( $this, 'signup_blogform_extra_field' ));
-		//~ }
         
         # WP, ALL MATURES ARE OK
         if( 'sites.php' != $pagenow )
@@ -206,10 +203,6 @@ class B5F_Multisite_Categories
         );
         # Workaround to remove the suffix "-master" from the unzipped directory
         add_filter( 'upgrader_source_selection', array( $this, 'rename_github_zip' ), 1, 3 );
-        
-		//~ add_action('wpmu_new_blog', array( $this, 'add_new_blog_field' ));
-		//~ add_filter('add_signup_meta', array( $this, 'append_extra_field_as_meta'));
-		
     }
 
 
@@ -221,63 +214,6 @@ class B5F_Multisite_Categories
      */
     public function __construct() {}
 
-
-     /**
-	* Add new option when registering a site (back and front end)
-	*
-	* URI: http://stackoverflow.com/a/10372861/1287812
-	*/
-	//~ public function add_new_blog_field( $blog_id, $user_id, $domain, $path, $site_id, $meta )
-	//~ {
-		//~ $new_field_value = 'default';
-	//~ 
-		//~ // Site added in the back end
-		//~ if( !empty( $_POST['blog']['site_category'] ) )
-		//~ {
-			//~ switch_to_blog( $blog_id );
-			//~ $new_field_value = $_POST['blog']['site_category'];
-			//~ update_option( 'site_category', $new_field_value );
-		//~ 
-			//~ restore_current_blog();
-		//~ }
-		//~ // Site added in the front end
-		//~ elseif( !empty( $meta['site_category'] ) )
-		//~ {
-			//~ $new_field_value = $meta['site_category'];
-			//~ update_option( 'site_category', $new_field_value );
-		//~ }
-	//~ }
-
-
-
-	/**
-	 * Add new field in site signup form /wp-signup.php
-	 *
-	 * URI: http://wordpress.stackexchange.com/a/50550/12615
-	 */
-	//~ public function signup_blogform_extra_field()
-	//~ {
-		//~ $txt = __( 'Category' );
-		//~ echo "
-		//~ <label>{$txt}</label>
-		//~ <input type='text' name='site_category' value='' />
-	//~ ";
-	//~ }
-	
-	
-	/**
-	 * Append the submitted value of our custom input 
-	 * into the meta array that is stored while the user doesn't activate
-	 *
-	 * URI: http://wordpress.stackexchange.com/a/50550/12615
-	 */
-	//~ public function append_extra_field_as_meta( $meta )
-	//~ {
-		//~ if( isset( $_REQUEST['site_category'] ) )
-			//~ $meta['site_category'] = $_REQUEST['site_category'];
-	//~ 
-		//~ return $meta;
-	//~ }
 
     /**
      * Tell WP all Matures are equal to 0
@@ -346,7 +282,7 @@ HTML;
     public function get_dropdown( $site_id )
     {
         $all_cats = get_option( self::$option_name );
-        $dropdown = '<select name="input_site_cat" id="input_site_cat">';
+        $dropdown = '<select name="blog[input_site_cat]" id="input_site_cat">';
         $site_cat = !empty( $site_id ) ? get_blog_option( $site_id, 'site_category' ) : false;
         $empty_cat = '';
         if( $site_cat )
