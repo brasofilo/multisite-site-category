@@ -282,7 +282,7 @@ HTML;
     public function get_dropdown( $site_id )
     {
         $all_cats = get_option( self::$option_name );
-        $dropdown = '<select name="blog[input_site_cat]" id="input_site_cat">';
+        $dropdown = '<select name="input_site_cat" id="input_site_cat">';
         $site_cat = !empty( $site_id ) ? get_blog_option( $site_id, 'site_category' ) : false;
         $empty_cat = '';
         if( $site_cat )

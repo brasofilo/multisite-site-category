@@ -58,11 +58,11 @@ class B5F_Sites_Categories_Signup
         $new_field_value = '';
 
         # Site added in the back end
-        if( !empty( $_POST['blog']['input_site_cat'] ) )
+        if( !empty( $_POST['input_site_cat'] ) )
         {
             switch_to_blog( $blog_id );
             
-            $cat_id = $_POST['blog']['input_site_cat'];
+            $cat_id = $_POST['input_site_cat'];
             
             # debug
             do_action( 'add_debug_info', $cat_id, $label );
