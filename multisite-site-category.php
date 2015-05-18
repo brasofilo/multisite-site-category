@@ -5,9 +5,10 @@
  * Plugin URI: https://github.com/brasofilo/multisite-site-category
  * Description: Add a custom meta option when registering new sites in WordPress Multisite.
  * Network: true
- * Author: Rodolfo Buaiz
- * Author URI: http://rodbuaiz.com/
- * Version: 2013.10.11
+ * Original author: Rodolfo Buaiz
+ * Maintainer: Trinh Nguyen
+ * Maintainer URI: http://me.dangtrinh.com
+ * Version: 2.00
  * License: GPLv2 or later
  * 
  */
@@ -15,6 +16,7 @@
 /*
 Multisite Site Category
 Copyright (C) 2013  Rodolfo Buaiz
+Copyright (C) 2015 Trinh Nguyen
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
