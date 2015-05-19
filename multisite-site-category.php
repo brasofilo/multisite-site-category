@@ -6,8 +6,8 @@
  * Description: Add a custom meta option when registering new sites in WordPress Multisite.
  * Network: true
  * Original author: Rodolfo Buaiz
- * Maintainer: Trinh Nguyen
- * Maintainer URI: http://me.dangtrinh.com
+ * Author: Trinh Nguyen
+ * Author URI: http://me.dangtrinh.com
  * Version: 2015.05.18
  * License: GPLv2 or later
  * Network: True
