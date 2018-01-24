@@ -176,7 +176,7 @@ class B5F_Multisite_Categories
         
         # WP, ALL MATURES ARE OK
         if( 'sites.php' != $pagenow )
-            add_filter( 'blog_details', array( $this, 'hack_mature_queries' ) );	
+            add_filter( 'site_details', array( $this, 'hack_mature_queries' ) );	
 
         # BAIL OUT
         if( !is_network_admin() )
