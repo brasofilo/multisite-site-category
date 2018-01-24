@@ -13,7 +13,7 @@ This is a workaround to allow sorting the sites based on categories.
 There's a filter being applied (except in the sites screen) that tells WordPress that the site is **not mature**:
 ```
 if( 'sites.php' != $pagenow )
-    add_filter( 'blog_details', array( $this, 'hack_mature_queries' ) );	
+    add_filter( 'site_details', array( $this, 'hack_mature_queries' ) );	
 public function hack_mature_queries( $details )
 {
     $details->mature = 0;

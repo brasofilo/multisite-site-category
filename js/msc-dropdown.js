@@ -9,7 +9,7 @@
  */
 
 // UNUSED TEXT FIELD
-// var b5f_add_field = '<input class="regular-text" type="text" title="Site Category" name="blog[site_category]">';
+//~ var b5f_add_field = '<input class="regular-text" type="text" title="Site Category" name="blog[site_category]">';
 
 // Common opening for new fields
 var b5f_open_tr = '<tr class="form-field form-required"></tr>';

@@ -2,19 +2,21 @@
 
 /**
  * Plugin Name: Multisite Site Category
- * Plugin URI: https://github.com/brasofilo/multisite-site-category
+ * Plugin URI: https://github.com/dangtrinh/multisite-site-category.git
  * Description: Add a custom meta option when registering new sites in WordPress Multisite.
  * Network: true
- * Author: Rodolfo Buaiz
- * Author URI: http://rodbuaiz.com/
- * Version: 2013.10.11
+ * Original author: Rodolfo Buaiz
+ * Author: Trinh Nguyen
+ * Author URI: http://me.dangtrinh.com
+ * Version: 2015.05.18
  * License: GPLv2 or later
- * 
+ * Network: True
  */
 
 /*
 Multisite Site Category
 Copyright (C) 2013  Rodolfo Buaiz
+Copyright (C) 2015 Trinh Nguyen
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -168,12 +170,13 @@ class B5F_Multisite_Categories
         
         # SIGNUP FIELDS
         # needs further work, disable for now
-        // require_once 'inc/class-sites-categories-signup.php';
-        // new B5F_Sites_Categories_Signup();
+        require_once 'inc/class-sites-categories-signup.php';
+        new B5F_Sites_Categories_Signup();
+        
         
         # WP, ALL MATURES ARE OK
         if( 'sites.php' != $pagenow )
-            add_filter( 'blog_details', array( $this, 'hack_mature_queries' ) );	
+            add_filter( 'site_details', array( $this, 'hack_mature_queries' ) );	
 
         # BAIL OUT
         if( !is_network_admin() )
